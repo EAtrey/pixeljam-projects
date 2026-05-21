@@ -1,39 +1,79 @@
-let theButton = document.getElementById('click-me');
-let feedbackValue = document.getElementById('feedback-value');
-let levelValue = document.getElementById('level-current');
-let levelProgress = document.getElementById('level-progress');
-let clicks = 0;
-let levelClicks = 0;
-let clicksToLevelUp = 10;
-let level = 1;
+// -----------------------------
+// DOM references
+// -----------------------------
 
-let handleClick = () => {
-    addClick();
-    updateFeedback();
-    progressLevel();
+const elements = {
+  button: document.getElementById("click-me"),
+  feedbackValue: document.getElementById("feedback-value"),
+  levelValue: document.getElementById("level-current"),
+  levelProgress: document.getElementById("level-progress"),
+};
+
+// -----------------------------
+// Game state
+// -----------------------------
+
+const gameState = {
+  clicks: 0,
+  level: 1,
+  levelClicks: 0,
+  clicksToLevelUp: 10,
+};
+
+// -----------------------------
+// Game config
+// -----------------------------
+
+const config = {
+  baseClicksToLevelUp: 10,
+};
+
+// -----------------------------
+// Game logic
+// -----------------------------
+
+function addClick(state) {
+  state.clicks += 1;
+  state.levelClicks += 1;
 }
 
-let addClick = () => {
-    clicks++;
-    levelClicks++;
+function getClicksRequiredForLevel(level) {
+  return config.baseClicksToLevelUp * level;
 }
 
-let updateFeedback = () => {
-    feedbackValue.innerHTML = `${clicks}`;
+function checkLevelUp(state) {
+  if (state.levelClicks < state.clicksToLevelUp) {
+    return;
+  }
+
+  state.level += 1;
+  state.levelClicks = 0;
+  state.clicksToLevelUp = getClicksRequiredForLevel(state.level);
 }
 
-let progressLevel = () => {
-    if(levelClicks < clicksToLevelUp) {
-        levelProgress.setAttribute('value', levelClicks);
-    } else {
-        level+=1;
-        levelClicks = 0;
-        clicksToLevelUp = 10 * level;
-        levelValue.innerHTML = `${level}`;
-        levelProgress.setAttribute('value', levelClicks);
-        levelProgress.setAttribute('max', clicksToLevelUp);
-    }
-    
+function handlePlayerClick() {
+  addClick(gameState);
+  checkLevelUp(gameState);
+  render();
 }
 
-theButton.addEventListener('click', handleClick);
+// -----------------------------
+// Rendering
+// -----------------------------
+
+function render() {
+  elements.feedbackValue.textContent = gameState.clicks;
+  elements.levelValue.textContent = gameState.level;
+
+  elements.levelProgress.value = gameState.levelClicks;
+  elements.levelProgress.max = gameState.clicksToLevelUp;
+}
+
+// -----------------------------
+// Input
+// -----------------------------
+
+elements.button.addEventListener("click", handlePlayerClick);
+
+// Initial render
+render();
