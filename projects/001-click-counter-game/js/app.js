@@ -3,8 +3,9 @@ let feedbackValue = document.getElementById('feedback-value');
 let levelValue = document.getElementById('level-current');
 let levelProgress = document.getElementById('level-progress');
 let clicks = 0;
+let levelClicks = 0;
 let clicksToLevelUp = 10;
-let level = 0;
+let level = 1;
 
 let handleClick = () => {
     addClick();
@@ -14,6 +15,7 @@ let handleClick = () => {
 
 let addClick = () => {
     clicks++;
+    levelClicks++;
 }
 
 let updateFeedback = () => {
@@ -21,13 +23,14 @@ let updateFeedback = () => {
 }
 
 let progressLevel = () => {
-    if(levelProgress.getAttribute('value') < clicksToLevelUp) {
-        levelProgress.setAttribute('value', clicks);
+    if(levelClicks < clicksToLevelUp) {
+        levelProgress.setAttribute('value', levelClicks);
     } else {
         level+=1;
-        clicksToLevelUp = clicksToLevelUp * level;
+        levelClicks = 0;
+        clicksToLevelUp = 10 * level;
         levelValue.innerHTML = `${level}`;
-        levelProgress.setAttribute('value', 0);
+        levelProgress.setAttribute('value', levelClicks);
         levelProgress.setAttribute('max', clicksToLevelUp);
     }
     
