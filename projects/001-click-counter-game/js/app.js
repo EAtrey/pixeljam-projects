@@ -7,6 +7,7 @@ const elements = {
   feedbackValue: document.getElementById("feedback-value"),
   levelValue: document.getElementById("level-current"),
   levelProgress: document.getElementById("level-progress"),
+  store: document.getElementById("store"),
 };
 
 // -----------------------------
@@ -18,6 +19,14 @@ const gameState = {
   level: 1,
   levelClicks: 0,
   clicksToLevelUp: 10,
+  powerups: [
+    {
+        title: 'Double Clicks',
+        isActive: 0,
+        cost: 500,
+        className: 'power--double-click'
+    },
+  ]
 };
 
 // -----------------------------
@@ -69,6 +78,13 @@ function render() {
   elements.levelProgress.max = gameState.clicksToLevelUp;
 }
 
+function renderStore() {
+    for (const power of gameState.powerups) {
+        let ele = `<div class="${power.className}" id="${power.className}">${power.title}</div>`;
+        elements.store.innerHTML += ele;
+    }
+}
+
 // -----------------------------
 // Input
 // -----------------------------
@@ -77,3 +93,4 @@ elements.button.addEventListener("click", handlePlayerClick);
 
 // Initial render
 render();
+renderStore();
