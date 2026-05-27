@@ -16,6 +16,7 @@ const elements = {
 
 const gameState = {
   clicks: 0,
+  valuePerClick: 1,
   level: 1,
   levelClicks: 0,
   clicksToLevelUp: 10,
@@ -23,8 +24,11 @@ const gameState = {
     {
         title: 'Double Clicks',
         isActive: 0,
-        cost: 500,
-        className: 'power--double-click'
+        cost: 20,
+        className: 'power--double-click',
+        activate: function () {
+            gameState.valuePerClick *= 2; 
+        }
     },
   ]
 };
@@ -42,8 +46,8 @@ const config = {
 // -----------------------------
 
 function addClick(state) {
-  state.clicks += 1;
-  state.levelClicks += 1;
+  state.clicks += gameState.valuePerClick;
+  state.levelClicks += gameState.valuePerClick;
 }
 
 function getClicksRequiredForLevel(level) {
@@ -66,6 +70,16 @@ function handlePlayerClick() {
   render();
 }
 
+function addPowerUp($key) {
+    if(gameState.clicks >= gameState.powerups[$key].cost) {
+        gameState.clicks -= gameState.powerups[$key].cost;
+        gameState.levelClicksclicks -= gameState.powerups[$key].cost;
+        gameState.powerups[$key].isActive = 1;
+        gameState.powerups[$key].activate();
+        render();
+    }
+}
+
 // -----------------------------
 // Rendering
 // -----------------------------
@@ -79,8 +93,8 @@ function render() {
 }
 
 function renderStore() {
-    for (const power of gameState.powerups) {
-        let ele = `<div class="${power.className}" id="${power.className}">${power.title}</div>`;
+    for (const [key, value] of Object.entries(gameState.powerups)) {
+        let ele = `<div class="powerup"> <button id="${value.className}" class="contrast ${value.className}" onClick="addPowerUp(${key})" type="button">${value.title}</button></div>`;
         elements.store.innerHTML += ele;
     }
 }
